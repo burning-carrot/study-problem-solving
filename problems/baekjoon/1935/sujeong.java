@@ -15,13 +15,17 @@ public class Main {
         Stack<Double> operands = new Stack<>();
 
         String[] operations = br.readLine().split("");
+        String[] operandNumbers = new String[operandNumber];
 
         for (int i = 0; i < operandNumber; i++) {
-            int number = Integer.parseInt(br.readLine());
-            for (int j = 0; j < operations.length; j++) {
-                if (operations[j].charAt(0) == 65 + i) {
-                    operations[j] = Integer.toString(number);
-                }
+            operandNumbers[i] = br.readLine();
+        }
+
+        for (int i = 0; i < operations.length; i++) {
+            int ascii = operations[i].charAt(0);
+
+            if (ascii >= 65 && ascii <= 90) {
+                operations[i] = operandNumbers[ascii - 65];
             }
         }
 
