@@ -15,25 +15,18 @@ public class Main {
         Stack<Double> operands = new Stack<>();
 
         String[] operations = br.readLine().split("");
-        String[] operandNumbers = new String[operandNumber];
+        double[] operandNumbers = new double[operandNumber];
 
         for (int i = 0; i < operandNumber; i++) {
-            operandNumbers[i] = br.readLine();
+            operandNumbers[i] = Integer.parseInt(br.readLine());
         }
 
         for (int i = 0; i < operations.length; i++) {
             int ascii = operations[i].charAt(0);
 
             if (ascii >= 65 && ascii <= 90) {
-                operations[i] = operandNumbers[ascii - 65];
-            }
-        }
-
-        for (int i = 0; i < operations.length; i++) {
-            try {
-                double number = Integer.parseInt(operations[i]);
-                operands.push(number);
-            } catch (Exception e) {
+                operands.push(operandNumbers[ascii - 65]);
+            } else {
                 double secondOperand = operands.pop();
                 double firstOperand = operands.pop();
 
@@ -41,11 +34,11 @@ public class Main {
                 operands.push(result);
             }
         }
-
         bw.write(String.format("%.2f", operands.pop()));
 
         bw.flush();
         bw.close();
+
     }
 
     public static double calculate(double number1, double number2, String operator) {
