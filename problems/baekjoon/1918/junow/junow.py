@@ -20,14 +20,20 @@ class Stack:
   def size(self):
     return len(self.items)
 
-
-priority = {}
-priority['+'] = 1
-priority['-'] = 1
-priority['*'] = 2
-priority['/'] = 2
-
-
+isp = {
+  '+': 1,
+  '-': 1,
+  '*': 2,
+  '/': 2,
+  '(': 0
+}
+icp = {
+  '+': 1,
+  '-': 1,
+  '*': 2,
+  '/': 2,
+  '(': 3
+}
 def solution():
   infix = input()
   postfix = ''
@@ -36,8 +42,6 @@ def solution():
   for ch in infix:  
     if ch.isalpha():
       postfix += str(ch)
-    elif ch == '(':
-      stack.push(ch)
     elif ch == ')':
       while stack.peek() != '(':
         postfix += str(stack.pop())
@@ -46,21 +50,19 @@ def solution():
       if stack.is_empty():
         stack.push(ch)
       else:
-        while stack.is_empty() == False and stack.peek() != '(' and priority[stack.peek()] >= priority[ch]:
-          postfix += stack.pop()
+        while stack.is_empty() == False and isp[stack.peek()] >= icp[ch]:
+          if stack.peek() == '(':
+            stack.pop()
+            break
+          else:
+            postfix += stack.pop()
         stack.push(ch)
 
   while stack.is_empty() == False:
     postfix += stack.pop()
 
+
   print(postfix)
 
 
-
-
-
-
 solution()
-
-
-
