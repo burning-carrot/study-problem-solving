@@ -14,23 +14,21 @@ public class Main {
 
         Stack<Double> operands = new Stack<>();
 
-        String[] operations = br.readLine().split("");
+        String operations = br.readLine();
         double[] operandNumbers = new double[operandNumber];
 
         for (int i = 0; i < operandNumber; i++) {
             operandNumbers[i] = Integer.parseInt(br.readLine());
         }
 
-        for (int i = 0; i < operations.length; i++) {
-            int ascii = operations[i].charAt(0);
-
-            if (ascii >= 65 && ascii <= 90) {
-                operands.push(operandNumbers[ascii - 65]);
+        for (char operation : operations.toCharArray()) {
+            if (operation >= 65 && operation <= 90) {
+                operands.push(operandNumbers[operation - 65]);
             } else {
                 double secondOperand = operands.pop();
                 double firstOperand = operands.pop();
 
-                double result = calculate(firstOperand, secondOperand, operations[i]);
+                double result = calculate(firstOperand, secondOperand, operation);
                 operands.push(result);
             }
         }
@@ -41,10 +39,10 @@ public class Main {
 
     }
 
-    public static double calculate(double number1, double number2, String operator) {
+    public static double calculate(double number1, double number2, char operator) {
         double result = 0;
 
-        switch (operator.charAt(0)) {
+        switch (operator) {
             case '*':
                 result = number1 * number2;
                 break;
