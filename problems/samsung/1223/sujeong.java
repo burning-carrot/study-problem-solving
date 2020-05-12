@@ -14,11 +14,11 @@ public class Main {
 
         for (int i = 0; i < testCase; i++) {
             br.readLine(); // 문자열 길이 입력 날림
-            char[] operations = br.readLine().toCharArray();
-            char[] posteriorOperations = makePosteriorOperation(operations);
+            char[] infixOperations = br.readLine().toCharArray();
+            char[] postfixOperations = makePosfix(infixOperations);
             Stack<Integer> operands = new Stack<>();
 
-            for (char operation : posteriorOperations) {
+            for (char operation : postfixOperations) {
                 if (operation >= '0' && operation <= '9') {
                     operands.push(operation - '0');
                 } else {
@@ -60,13 +60,13 @@ public class Main {
         return result;
     }
 
-    public static char[] makePosteriorOperation(char[] operations) {
-        StringBuilder posteriorOperation = new StringBuilder();
+    public static char[] makePosfix(char[] infixOperations) {
+        StringBuilder postfixOperations = new StringBuilder();
         Stack<Character> operators = new Stack<>();
 
-        for (char operation : operations) {
+        for (char operation : infixOperations) {
             if (operation >= '0' && operation <= '9') {
-                posteriorOperation.append(operation);
+                postfixOperations.append(operation);
                 continue;
             }
 
@@ -75,39 +75,26 @@ public class Main {
                 continue;
             }
 
-            char operator = operators.peek();
+            while(!operators.isEmpty()){
+                int priorityGap = getPriority(operators.peek()) - getPriority(operation);
 
-            posteriorOperation.append(comparePriority(operator, operation, operators));
+                if(priorityGap < 0){
+                    break;
+                }
+
+                postfixOperations.append(operators.pop());
+            }
+
+            operators.push(operation);
         }
 
         while (!operators.isEmpty()) {
-            posteriorOperation.append(operators.pop());
+            postfixOperations.append(operators.pop());
         }
 
-        return posteriorOperation.toString().toCharArray();
+        return postfixOperations.toString().toCharArray();
     }
-
-    public static String comparePriority(char operator1, char operator2, Stack<Character> operators) {
-        int priorityGap = getPriority(operator1) - getPriority(operator2);
-        String result = "";
-
-        if (priorityGap < 0) {
-            operators.push(operator2);
-        } else {
-            result += operators.pop();
-
-            if (operators.isEmpty()) {
-                operators.push(operator2);
-                return result;
-            }
-
-            char nextOperator = operators.peek();
-            result += comparePriority(nextOperator, operator2, operators);
-        }
-
-        return result;
-    }
-
+    
     public static int getPriority(char operator) {
         int priority = 0;
 
