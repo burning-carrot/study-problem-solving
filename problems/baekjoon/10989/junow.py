@@ -7,7 +7,7 @@ for i in range(N):
   num = int(stdin.readline())
   nums[num] +=1
 
-for i in range(10001):
-  if nums[i] != 0:
-    for j in range(nums[i]):
-      print(i)
+for i, cnt in enumerate(nums):
+  if cnt > 0:
+    print((cnt)*'{}\n'.format(i), end='')
+    
