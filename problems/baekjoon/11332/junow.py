@@ -1,4 +1,4 @@
-from math import log2
+from math import log2, factorial
 from sys import stdin
 
 MAX = 100000000
@@ -6,14 +6,6 @@ CORRECT = 'May Pass.'
 WRONG = 'TLE!'
 
 TEST_CASE  = int(stdin.readline())
-
-def fac(T, N, L):
-  ret = 1
-  for i in range(N):
-    ret *= (i+1)
-    if(ret >= MAX*L/T):
-      return False
-  return ret
 
 def On(T, N, L):
   return N*T <= MAX*L
@@ -28,7 +20,10 @@ def expo2(T, N, L):
   return log2(T)+N <= log2(MAX*L)
 
 def NFac(T, N, L):
-  return fac(T, N, L)
+  if N>12:
+    return False;
+  else:
+    return T*factorial(N) <= MAX*L
 
 dict = {
   'O(N)': On,
