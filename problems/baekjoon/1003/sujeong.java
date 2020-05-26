@@ -13,26 +13,49 @@ public class Main {
 
         for (int i = 0; i < testCase; i++) {
             int number = Integer.parseInt(br.readLine());
-            int[] callNumberOfN = getCallNumber(number);
+            CallNumber callNumberOfN = getCallNumber(number);
 
-            bw.write(String.valueOf(callNumberOfN[0]) + " " + String.valueOf(callNumberOfN[1]) + "\n");
+            bw.write(callNumberOfN.toString());
         }
 
         bw.flush();
         bw.close();
     }
 
-    public static int[] getCallNumber(int n) {
-        int[][] callNumberOfZeroNOne = new int[41][2];
+    public static CallNumber getCallNumber(int n) {
+        CallNumber[] zeroNOne = new CallNumber[41];
 
-        callNumberOfZeroNOne[0][0] = 1;
-        callNumberOfZeroNOne[1][1] = 1;
+        zeroNOne[0] = new CallNumber(1, 0);
+        zeroNOne[1] = new CallNumber(0, 1);
 
         for (int i = 2; i <= n; i++) {
-            callNumberOfZeroNOne[i][0] = callNumberOfZeroNOne[i - 1][0] + callNumberOfZeroNOne[i - 2][0];
-            callNumberOfZeroNOne[i][1] = callNumberOfZeroNOne[i - 1][1] + callNumberOfZeroNOne[i - 2][1];
+            int zero = zeroNOne[i - 1].zero + zeroNOne[i - 2].zero;
+            int one = zeroNOne[i - 1].one + zeroNOne[i - 2].one;
+
+            zeroNOne[i] = new CallNumber(zero, one);
         }
 
-        return callNumberOfZeroNOne[n];
+        return zeroNOne[n];
+    }
+}
+
+class CallNumber {
+    int zero;
+    int one;
+
+    public CallNumber(int zero, int one) {
+        this.zero = zero;
+        this.one = one;
+    }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append(String.valueOf(zero));
+        sb.append(" ");
+        sb.append(String.valueOf(one));
+        sb.append("\n");
+
+        return sb.toString();
     }
 }
