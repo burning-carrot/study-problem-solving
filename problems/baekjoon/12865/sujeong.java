@@ -22,12 +22,8 @@ public class Main {
         }
 
         for (int i = 0; i < productNumber; i++) {
-            for (int j = maxWeight; j >= 1; j--) {
-                if (products[i].weight <= j) {
-                    bags[j] = Math.max(bags[j], bags[j - products[i].weight] + products[i].value);
-                } else {
-                    break;
-                }
+            for (int j = maxWeight; j >= products[i].weight; j--) {
+                bags[j] = Math.max(bags[j], bags[j - products[i].weight] + products[i].value);
             }
         }
 
