@@ -1,7 +1,7 @@
 name: mergeonMondy
 on:
   schedule:
-    - cron: "0 0 * * MON"
+    - cron: "0-3 0 * * MON"
 jobs:
   automerge:
     runs-on: ubuntu-latest
