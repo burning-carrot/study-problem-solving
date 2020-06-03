@@ -11,76 +11,95 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        char[] information = br.readLine().toCharArray();
-        Queue<int[]> ripenTomatoes = new LinkedList<>();
+        String[] information = br.readLine().split(" ");
+        int col = Integer.parseInt(information[0]);
+        int row = Integer.parseInt(information[1]);
 
-        int col = information[0] - '0';
-        int row = information[2] - '0';
-
-        int[][] tomatoes = new int[row][col];
-        int unripeTomatoNumber = 0;
+        TomatoBox tomatoes = new TomatoBox(row, col);
 
         for (int i = 0; i < row; i++) {
-            String[] tomatoRow = br.readLine().split(" ");
-            for (int j = 0; j < col; j++) {
-                tomatoes[i][j] = Integer.parseInt(tomatoRow[j]);
-
-                if (tomatoes[i][j] == 1) {
-                    ripenTomatoes.offer(new int[] { i, j });
-                } else if (tomatoes[i][j] == 0) {
-                    unripeTomatoNumber += 1;
-                }
-            }
+            tomatoes.putTomatoes(i, br.readLine().split(" "));
         }
 
-        int days = getAllTomatoRipenDay(unripeTomatoNumber, ripenTomatoes, tomatoes);
-
+        int days = tomatoes.getAllTomatoRipenDay();
         bw.write(Integer.toString(days));
 
         bw.flush();
         bw.close();
     }
+}
 
-    public static int getAllTomatoRipenDay(int unripeTomatoNumber, Queue<int[]> ripenTomatoes, int[][] tomatoes) {
-        if (unripeTomatoNumber == 0) {
+class TomatoBox {
+    private int[][] tomatoBox;
+    private int boxWidth;
+    private int boxHeight;
+    Queue<Location> ripenTomatoes;
+    private int unripeTomatoes = 0;
+
+    public TomatoBox(int row, int col) {
+        this.boxHeight = row;
+        this.boxWidth = col;
+        this.tomatoBox = new int[boxHeight][boxWidth];
+        this.ripenTomatoes = new LinkedList<>();
+    }
+
+    public void putTomatoes(int row, String[] tomatoRow) {
+        for (int i = 0; i < boxWidth; i++) {
+            tomatoBox[row][i] = Integer.parseInt(tomatoRow[i]);
+
+            if (tomatoBox[row][i] == 0) {
+                unripeTomatoes += 1;
+            } else if (tomatoBox[row][i] == 1) {
+                ripenTomatoes.offer(new Location(row, i));
+            }
+        }
+    }
+
+    public int getAllTomatoRipenDay() {
+        if (unripeTomatoes == 0) {
             return 0;
         }
 
         int days = 0;
-        int row = tomatoes.length;
-        int col = tomatoes[0].length;
-        int[] directionX = { 0, 0, -1, 1 };
-        int[] directionY = { -1, 1, 0, 0 };
+        Location[] direction = { new Location(-1, 0), new Location(1, 0), new Location(0, -1), new Location(0, 1) };
+        Queue<Location> newRipenTomatoes = new LinkedList<>();
 
         while (!ripenTomatoes.isEmpty()) {
-            int todayRipenTomatoNumber = ripenTomatoes.size();
+            Location ripenTomato = ripenTomatoes.poll();
 
-            for (int i = 0; i < todayRipenTomatoNumber; i++) {
-                int[] ripenTomato = ripenTomatoes.poll();
+            for (int i = 0; i < 4; i++) {
+                int nextCol = ripenTomato.col + direction[i].col;
+                int nextRow = ripenTomato.row + direction[i].row;
 
-                for (int j = 0; j < 4; j++) {
-                    int nextX = ripenTomato[1] + directionX[j];
-                    int nextY = ripenTomato[0] + directionY[j];
+                if (nextCol < 0 || nextCol >= boxWidth || nextRow < 0 || nextRow >= boxHeight) {
+                    continue;
+                }
 
-                    if (nextX < 0 || nextX >= col || nextY < 0 || nextY >= row) {
-                        continue;
-                    }
-
-                    if (tomatoes[nextY][nextX] == 0) {
-                        tomatoes[nextY][nextX] = 1;
-                        unripeTomatoNumber -= 1;
-                        ripenTomatoes.offer(new int[] { nextY, nextX });
-                    }
+                if (tomatoBox[nextRow][nextCol] == 0) {
+                    tomatoBox[nextRow][nextCol] = 1;
+                    unripeTomatoes -= 1;
+                    newRipenTomatoes.offer(new Location(nextRow, nextCol));
                 }
             }
 
-            if (ripenTomatoes.isEmpty()) {
-                break;
+            if (ripenTomatoes.isEmpty() && !newRipenTomatoes.isEmpty()) {
+                days += 1;
+                while (!newRipenTomatoes.isEmpty()) {
+                    ripenTomatoes.offer(newRipenTomatoes.poll());
+                }
             }
-
-            days += 1;
         }
 
-        return unripeTomatoNumber == 0 ? days : -1;
+        return unripeTomatoes == 0 ? days : -1;
+    }
+}
+
+class Location {
+    int col;
+    int row;
+
+    public Location(int row, int col) {
+        this.row = row;
+        this.col = col;
     }
 }
